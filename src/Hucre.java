@@ -1,3 +1,4 @@
+import com.sun.deploy.uitoolkit.DragListener;
 import org.omg.PortableServer.THREAD_POLICY_ID;
 
 import javax.swing.*;
@@ -46,4 +47,6 @@ public class Hucre extends JLabel implements MouseListener {
         else if(this.getBackground() == Color.BLACK)
             this.setBackground(Color.LIGHT_GRAY);
     }
+
+
 }

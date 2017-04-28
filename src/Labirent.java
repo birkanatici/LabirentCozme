@@ -1,3 +1,5 @@
+import com.sun.jmx.remote.security.JMXPluggableAuthenticator;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,6 +12,9 @@ public class Labirent extends JFrame {
     private static int satir, sutun;  // labirentte kaç satır, sutun olacağı
     private static Hucre hucre[][];  // labirentteki tüm hücreler, hucre[satir][sutun]
     private static Point startHucre , endHucre;
+    private static JPanel labPanel;
+    private static JPanel menuPanel;
+    private static JPanel anaPanel;
 
     public static void main(String args[]){
 
@@ -35,15 +40,66 @@ public class Labirent extends JFrame {
         startHucre = new Point((int)s.getX(), (int)s.getY());
         endHucre = new Point((int)e.getX(), (int)e.getY());
 
-        GridLayout layout = new GridLayout(satir, sutun, 1, 1);
-
         ekran = new JFrame("Labirent Çözücü");
-        ekran.setBounds(500,50,900, 900);
-        ekran.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ekran.setBounds(500,10,850, 900);
         ekran.setResizable(false);
-        ekran.getContentPane().setLayout(layout);
+        ekran.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        labPanel = new JPanel();
+        menuPanel = new JPanel();
+        anaPanel = new JPanel();
+
+
+        GridLayout labLayout = new GridLayout(satir, sutun, 1, 1);
+        GridBagLayout menuLayout = new GridBagLayout();
+        GridBagLayout anaLayout = new GridBagLayout();
+        GridBagConstraints bgc = new GridBagConstraints();
+
+        anaPanel.setLayout(anaLayout);
+
+        menuPanel.setLayout(menuLayout);
+        menuPanel.setBackground(Color.GRAY);
+        bgc.fill = GridBagConstraints.HORIZONTAL;
+        bgc.ipadx = 60;
+        bgc.ipady = 50;
+        bgc.insets = new Insets(0,5,0,5);
+
+        bgc.gridx = 0;
+        bgc.gridy = 0;
+
+        menuPanel.add(new Button("Çöz"), bgc);
+        bgc.gridx = 1;
+        bgc.gridy = 0;
+        menuPanel.add(new Button("Sıfırla"), bgc);
+
+        bgc.gridx = 2;
+        bgc.gridy = 0;
+        menuPanel.add(new Button("Boyut Değiştir"), bgc);
+
+
+        labPanel.setBackground(Color.WHITE);
+        labPanel.setLayout(labLayout);
+
+
 
         initHucre();
+
+        bgc.fill = GridBagConstraints.VERTICAL;
+        bgc.gridx = 0;
+        bgc.gridy = 0;
+        bgc.ipady = 850;
+        bgc.ipadx = 850;
+        anaPanel.add(labPanel, bgc);
+
+        bgc.gridx = 0;
+        bgc.gridy = 2;
+        bgc.ipady = 25;
+        bgc.ipadx = 500;
+
+        anaPanel.add(menuPanel, bgc);
+
+        ekran.add(anaPanel);
+        ekran.pack();
     }
 
     public void initHucre(){
@@ -61,7 +117,7 @@ public class Labirent extends JFrame {
                 else
                     hucre[i][j].setBackground(Color.LIGHT_GRAY);
 
-                this.ekran.getContentPane().add(hucre[i][j]);
+                this.labPanel.add(hucre[i][j]);
         }
     }
 
