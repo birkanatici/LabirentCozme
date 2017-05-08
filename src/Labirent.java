@@ -1,6 +1,7 @@
 import com.sun.javafx.scene.layout.region.Margins;
 import com.sun.jmx.remote.security.JMXPluggableAuthenticator;
 import jdk.internal.util.xml.impl.Input;
+import sun.plugin2.message.Message;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -10,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 /**
  * Created by birkan on 28.04.2017 : 03:00 PM
@@ -25,6 +27,8 @@ public class Labirent extends JFrame {
     private static JPanel menuPanel;
     private static Font font;
     private static Labirent lab;
+    private AStar algo;
+    private AStar algo2;
 
     public static void main(String[] args){
         EventQueue.invokeLater(new Runnable() {
@@ -63,29 +67,10 @@ public class Labirent extends JFrame {
 
         GridLayout labLayout = new GridLayout(satir, sutun, 1, 1);
 
-        Button b1 = new Button("     Çöz      ");
-        Button b2 = new Button("   Sıfırla    ");
-        Button b3 = new Button("Boyut Değiştir");
-        b1.setFont(font);
-        b2.setFont(font);
-        b3.setFont(font);
         GridBagConstraints gbc = new GridBagConstraints();
 
         menuPanel.setLayout(new GridBagLayout());
         gbc.insets = new Insets(0,10,0,10);
- //       gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        gbc.ipady = 10;
-        gbc.ipadx = 10;
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        menuPanel.add(b1, gbc);
-
-        gbc.gridx = 2;
-        menuPanel.add(b2, gbc);
-
-        gbc.gridx = 3;
-        menuPanel.add(b3, gbc);
 
         labPanel.setLayout(labLayout);
         anaPanel.setLayout(new GridBagLayout());
@@ -94,9 +79,7 @@ public class Labirent extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.ipadx = 0;
-       // gbc.ipady = 10;
 
-    //    anaPanel.add(menuPanel, gbc);
         gbc.gridy = 1;
 
         anaPanel.add(new JLabel(""), gbc);
@@ -104,6 +87,8 @@ public class Labirent extends JFrame {
         gbc.ipadx = 850;
         gbc.ipady = 850;
         gbc.gridy=2;
+
+
         anaPanel.add(labPanel, gbc);
 
         ekran.add(anaPanel);
@@ -130,6 +115,8 @@ public class Labirent extends JFrame {
 
                 labPanel.add(hucre[i][j]);
         }
+        algo2 = new AStar(hucre);
+
     }
 
     private void initMenuBar() {
@@ -145,6 +132,7 @@ public class Labirent extends JFrame {
         sifirlaBtn.setFont(font);
         boyutBtn.setFont(font);
 
+
         menu.add(cozBtn);
         menu.add(sifirlaBtn);
         menu.add(boyutBtn);
@@ -156,7 +144,16 @@ public class Labirent extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
             //    Hucre.MenuState = true;
-
+                EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        try {
+                            cozumle();
+                        } catch (Exception e) {
+                            System.out.println("çözümleme hatası.");
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
 
@@ -174,9 +171,10 @@ public class Labirent extends JFrame {
                 //Hucre.MenuState = true;
                 ekran.dispose();
                 boyutlandir();
-
             }
         });
+
+
 
     }
 
@@ -253,6 +251,57 @@ public class Labirent extends JFrame {
 
             main(null);
         }
+    }
+
+    public void cozumle() {
+        algo  = new AStar(hucre);
+
+        Dugum end = new Dugum((int) endHucre.getX(), (int) endHucre.getY());
+        Dugum dugum = new Dugum((int)startHucre.getX(), (int)startHucre.getY());
+        int count = 0;
+
+        for(int i=0; i<satir; i++)
+            for(int j=0; j<sutun; j++){
+                if(hucre[i][j].getBackground() == Color.cyan || hucre[i][j].getBackground() == Color.orange){
+                    hucre[i][j].setBackground(Color.LIGHT_GRAY);
+            }
+        }
+        ArrayList<Dugum> komsular = new ArrayList<>();
+
+        while (!end.equals(dugum)){
+            komsular = algo.komsuEkle();
+            dugum = algo.ilerle();
+            if(dugum==null){
+                JOptionPane.showMessageDialog(new JFrame(), "Çözüm Bulunamadı.", "Hata !!!",
+                        JOptionPane.ERROR_MESSAGE);
+                break;
+            }
+
+            System.out.println("X : " + dugum.getX()+" Y: "+dugum.getY() + " - Cost: gCost :"+dugum.getgCost() + " hCost:" + dugum.gethCost()+ " fCost:" + dugum.getfCost());
+            count++;
+
+            for(Dugum d : komsular)
+                hucre[d.getX()][d.getY()].setBackground(Color.orange);
+
+          //  hucre[dugum.getX()][dugum.getY()].setBackground(Color.MAGENTA);
+        }
+
+        Dugum parent = dugum;
+
+        while (parent.getParentDugum() != null){
+          try {
+              parent =  parent.getParentDugum();
+          }catch (Exception e){
+              break;
+          }
+          hucre[parent.getX()][parent.getY()].setBackground(Color.cyan);
+        }
+
+        System.out.println("Adım : " + count);
+
+        hucre[(int) startHucre.getX()][(int)startHucre.getY()].setBackground(Color.red);
+        hucre[(int) endHucre.getX()][(int)endHucre.getY()].setBackground(Color.green);
+
     }
 
 }
