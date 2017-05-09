@@ -87,7 +87,5 @@ public class AStar {
         double uzaklik = 0;
         uzaklik = Math.abs(a.getX() - b.getY())+ Math.abs(a.getY() - b.getY());
         return uzaklik;
-
-
     }
 }

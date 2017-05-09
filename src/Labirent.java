@@ -4,9 +4,9 @@ import jdk.internal.util.xml.impl.Input;
 import sun.plugin2.message.Message;
 
 import javax.swing.*;
+import java.awt.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -18,9 +18,9 @@ import java.util.ArrayList;
  */
 public class Labirent extends JFrame {
 
-    private static JFrame ekran;      // ana çerçevemiz
-    private static int satir = 25, sutun=25;  // labirentte kaç satır, sutun olacağı
-    private static Hucre hucre[][];  // labirentteki tüm hücreler, hucre[satir][sutun]
+    private static JFrame ekran;                // ana çerçevemiz
+    private static int satir = 25, sutun=25;    // labirentte kaç satır, sutun olacağı
+    private static Hucre hucre[][];             // labirentteki tüm hücreler, hucre[satir][sutun]
     private static Point startHucre = new Point(0,0), endHucre = new Point(satir-1,sutun-1);
     private static JPanel labPanel;
     private static JPanel anaPanel;
@@ -132,7 +132,6 @@ public class Labirent extends JFrame {
         sifirlaBtn.setFont(font);
         boyutBtn.setFont(font);
 
-
         menu.add(cozBtn);
         menu.add(sifirlaBtn);
         menu.add(boyutBtn);
@@ -143,7 +142,6 @@ public class Labirent extends JFrame {
         cozBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            //    Hucre.MenuState = true;
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         try {
@@ -274,6 +272,8 @@ public class Labirent extends JFrame {
             if(dugum==null){
                 JOptionPane.showMessageDialog(new JFrame(), "Çözüm Bulunamadı.", "Hata !!!",
                         JOptionPane.ERROR_MESSAGE);
+                hucre[(int) startHucre.getX()][(int)startHucre.getY()].setBackground(Color.red);
+                hucre[(int) endHucre.getX()][(int)endHucre.getY()].setBackground(Color.green);
                 break;
             }
 
